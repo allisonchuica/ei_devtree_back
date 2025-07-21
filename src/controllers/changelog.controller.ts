@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
 import { ChangeLog } from '../models/changelog.model';
 
-export const getChangeLogs = async (_req: Request, res: Response) => {
+export const getChangeLogs = async (req: Request, res: Response) => {
   try {
-    const logs = await ChangeLog.find().sort({ timestamp: -1 });
+    const { userId } = req.query;
+
+    const filter: any = {};
+    if (userId) {
+      filter.userId = userId;
+    }
+    const logs = await ChangeLog.find(filter).sort({ timestamp: -1 });
     res.json(logs);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener el historial' });
